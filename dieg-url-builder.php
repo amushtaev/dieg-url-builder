@@ -11,11 +11,19 @@
  * Text Domain:       utm
  */  
 
-
 $dieg = 'dieg';
 $diegtitle = 'UTM-метки поста';
 $diegcallback = 'dieg_showup';
+$post_id = $post->ID;
 
+$version = '0.0.1';
+$plugin_name = 'dieg_utm';
+$plugin_real_name = 'dieg-utm-url-builder';
+
+
+$custom_fields = get_post_custom($post->ID);
+  print "$custom_fields";
+  print $custom_fields;
 
 
 function dieg_showup() { 
@@ -23,23 +31,58 @@ function dieg_showup() {
 global $post;
 $fullval = get_permalink($post->ID);
 $val = str_replace(home_url(), '', get_permalink()); 
+$val = str_replace("/", "", $val);
 
-echo '<div method="get" action="'. $val .'?utm_source=wp" name="dieg_utm">'; 
-echo 'URL страницы записи : <p class="howto">'. $fullval .'</p>'; 
-echo '<input id="dieg_utm_source" class="dieg-hide '. $post_id .'" type="text" name="url" value="'. $val .'?utm_source=wp">'; 
-echo '<span id="dieg_utm_block"></span>'; 
-echo '<a id="dieg_utm" href="https://dieg.info/" class="dieg-btn" target="_blank">Отправить</a>'; 
-echo '</div>'; 
+$meta_key_term_fb;
+
+$meta_key_content_fb;
+$meta_value_content_fb;
+$meta_key_term_go;
+$meta_value_term_go;
+$meta_key_content_go;
+$meta_value_content_go;
+// хранить дефолтные значения как в произвольных полях
+
+$metas = get_post_meta( $post->ID ); // все мета поля
+
+/*$meta_key_fb = Array(
+    'post_id' => $this->post_id,
+    'fb_tolstelka' => $this->fb_tolstelka
+    );*/
+
+//Update inserts a new entry if it doesn't exist, updates otherwise
+//update_post_meta($post->ID, 'fb_tolstelka', $meta_key_fb);
+
+/*$meta_key_fb = 'fb_tolstelka';
+$meta_key_google = 'google';*/
+$meta_value_term_fb = get_post_meta($post->ID,'utm_term', true);
+
+if( array_key_exists('fb_tolstelka', $metas) !== 0 ) {
+	update_post_meta($post->ID, 'fb_tolstelka', $meta_key_fb);
+} elseif( array_key_exists('fb_tolstelka', $metas) === 0) {
+    add_post_meta( $post->ID, 'fb_tolstelka', 'fb_tolstelka', false );
+} 
+
+if( array_key_exists('google', $metas) ) {
+	update_post_meta($post->ID, 'google', $meta_key_google);
+} else {
+    add_post_meta( $post->ID, 'google', 'google', false );
+}
+
+if( array_key_exists('utm_term', $metas) ) {
+	update_post_meta($post->ID, 'utm_term', $meta_value_term_fb);
+} else {
+    add_post_meta( $post->ID, 'utm_term', $meta_value_term_fb, false );
+}
+
+//
+include_once('includes/dieg-sidebar-form.php');
+include_once('includes/dieg-call-class.php');
+include_once('includes/dieg-call-class-js.php');
 } 
 
 
-$version = '0.0.1';
-$plugin_name = 'dieg_utm';
-$plugin_real_name = 'dieg-utm-url-builder';
-
-
 wp_enqueue_style($plugin_name, plugin_dir_url( __FILE__ ) . 'css/dieg.css?v=' . rand(), array(), $version, 'all');
-wp_enqueue_script($plugin_name, plugin_dir_url( __FILE__ ) . 'js/dieg.js?v=' . rand(), array(), $version, 'all');
 
 
 function dieg_init($dieg, $diegtitle, $diegcallback) 
@@ -53,14 +96,14 @@ function dieg_init($dieg, $diegtitle, $diegcallback)
 
 add_action('add_meta_boxes', 'dieg_init'); 
 
+function array_fill_keys($array, $values) {
+    if(is_array($array)) {
+        foreach($array as $key => $value) {
+            $arraydisplay[$array[$key]] = $values;
+        }
+    }
+    return $arraydisplay;
+}
+
 ?> 
 
-<?php
-    # Если кнопка нажата
-    if( isset( $_POST['DiegSubmit'] ) )
-    {
-        # Тут пишете код, который нужно выполнить.
-        # Пример:
-        echo 'Кнопка нажата!';
-    }
-?>

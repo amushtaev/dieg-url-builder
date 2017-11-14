@@ -1,4 +1,19 @@
+<?php 
 /**
+ * JS Post
+ * Plugin Name:       Dieg UTM URL Builder
+ * Plugin URI:        
+ * Description:       Generates UTM links.
+ * Version:           0.0.1
+ * Author:            Alex Musshtaev
+ * License:           GPL-3.0+
+ * License URI:       http://www.gnu.org/licenses/gpl-3.0.txt
+ * Text Domain:       utm
+ */  
+?>
+<div class="load"></div>
+<script type="text/javascript">
+	/**
  * JS Post
  * Plugin Name:       Dieg UTM URL Builder
  * Plugin URI:        
@@ -57,3 +72,5 @@ function copyToClipboard(element) {
 	document.execCommand("copy");
 	$temp.remove();
 };
+
+</script>
