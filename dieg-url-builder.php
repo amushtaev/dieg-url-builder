@@ -14,7 +14,6 @@
 $dieg = 'dieg';
 $diegtitle = 'UTM-метки поста';
 $diegcallback = 'dieg_showup';
-$post_id = $post->ID;
 
 $version = '0.0.1';
 $plugin_name = 'dieg_utm';
@@ -29,51 +28,62 @@ $custom_fields = get_post_custom($post->ID);
 function dieg_showup() { 
 
 global $post;
-$fullval = get_permalink($post->ID);
+$fullval = get_permalink($post_id);
 $val = str_replace(home_url(), '', get_permalink()); 
 $val = str_replace("/", "", $val);
 
-$meta_key_term_fb;
 
-$meta_key_content_fb;
-$meta_value_content_fb;
-$meta_key_term_go;
-$meta_value_term_go;
-$meta_key_content_go;
-$meta_value_content_go;
 // хранить дефолтные значения как в произвольных полях
 
 $metas = get_post_meta( $post->ID ); // все мета поля
+$meta_value_term_fb = get_post_meta($post->ID,'utm_term_fb', true);
+$meta_key_fb = get_post_meta($post->ID,'fb_tolstelka', true);
+$meta_key_google = get_post_meta($post->ID,'google', true);
 
-/*$meta_key_fb = Array(
-    'post_id' => $this->post_id,
-    'fb_tolstelka' => $this->fb_tolstelka
-    );*/
-
-//Update inserts a new entry if it doesn't exist, updates otherwise
-//update_post_meta($post->ID, 'fb_tolstelka', $meta_key_fb);
-
-/*$meta_key_fb = 'fb_tolstelka';
-$meta_key_google = 'google';*/
-$meta_value_term_fb = get_post_meta($post->ID,'utm_term', true);
+//echo '<string>' . $meta_key_fb . '</string>';
+//echo '<string>' . $meta_key_google . '</string>';
+//echo '<string>' . $metas['fb_tolstelka'] . '</string>';
 
 if( array_key_exists('fb_tolstelka', $metas) !== 0 ) {
-	update_post_meta($post->ID, 'fb_tolstelka', $meta_key_fb);
-} elseif( array_key_exists('fb_tolstelka', $metas) === 0) {
+	update_post_meta($post->ID, 'fb_tolstelka', 'fb_tolstelka');
+	//echo '<string>1</string>';
+	//print_r(get_post_meta($post->ID,'fb_tolstelka', false));
+	//print array_key_exists('fb_tolstelka', $metas);
+} else if( array_key_exists('fb_tolstelka', $metas) === 0 ) {
     add_post_meta( $post->ID, 'fb_tolstelka', 'fb_tolstelka', false );
-} 
+    //echo '<string>2</string>';
+} else {
+	update_post_meta($post->ID, 'fb_tolstelka', $meta_key_fb);
+	//echo '<string>3</string>';
+}
 
-if( array_key_exists('google', $metas) ) {
+if( array_key_exists('google', $metas !== 0) ) {
 	update_post_meta($post->ID, 'google', $meta_key_google);
-} else {
+	//echo '<string>1g</string>';
+	//print_r(get_post_meta($post->ID,'google', false));
+	print array_key_exists('google', $metas);
+} else if( array_key_exists('google', $metas) === 0 ) {
+	//echo '<string>2g</string>';
     add_post_meta( $post->ID, 'google', 'google', false );
+} else {
+	//echo '<string>3g</string>';
+	update_post_meta($post->ID, 'google', 'google');
 }
 
-if( array_key_exists('utm_term', $metas) ) {
-	update_post_meta($post->ID, 'utm_term', $meta_value_term_fb);
+if( array_key_exists('utm_term_fb', $metas !== 0) ) {
+	update_post_meta($post->ID, 'utm_term_fb', $meta_value_term_fb);
+	echo '<string>1f</string>';
+	print_r(get_post_meta($post->ID,'utm_term_fb', false));
+	print array_key_exists('utm_term_fb', $metas);
+} else if( array_key_exists('utm_term_fb', $metas) === 0 ) {
+	echo '<string>2f</string>';
+    add_post_meta( $post->ID, 'utm_term_fb', '', false );
 } else {
-    add_post_meta( $post->ID, 'utm_term', $meta_value_term_fb, false );
+	echo '<string>3f -- '.$meta_value_term_fb. '</string>';
+	print array_key_exists('utm_term_fb', $metas);
+	//update_post_meta($post->ID, 'utm_term_fb', $meta_value_term_fb);
 }
+
 
 //
 include_once('includes/dieg-sidebar-form.php');
@@ -95,15 +105,6 @@ function dieg_init($dieg, $diegtitle, $diegcallback)
 } 
 
 add_action('add_meta_boxes', 'dieg_init'); 
-
-function array_fill_keys($array, $values) {
-    if(is_array($array)) {
-        foreach($array as $key => $value) {
-            $arraydisplay[$array[$key]] = $values;
-        }
-    }
-    return $arraydisplay;
-}
 
 ?> 
 

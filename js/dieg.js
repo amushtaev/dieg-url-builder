@@ -13,19 +13,19 @@
 
  jQuery(document).ready(function(){
   jQuery("#dieg_utm").click(function(){
-  	jQuery("#dieg_copy").show();
+  	console.log(jQuery(".tab-content.current a[id^='dieg_copy_']"), "fnuma")
+  	jQuery(".tab-content.current a[id^='dieg_copy_']").show();
   	var fnuma = [];
-  	jQuery(".dieg-input").each(function(i, field) {
+  	jQuery(".tab-content.current .dieg-input").each(function(i, field) {
 		var input = jQuery(this);
 		var name = jQuery(this).attr("name");
 		if(input.val()) {
 			fnuma.push(name + input.val());
 		}
-	})
-	console.log(fnuma, "fnuma")
+	});
    var fnumb = jQuery("#dieg_utm_source").val();
    fnuma = fnuma.join("");
-   jQuery("#dieg_utm_block").text(fnuma);
+   jQuery(".tab-content.current span[id^='dieg_utm_block_']").text(fnumb + fnuma);
    
    /*jQuery.post(window.location.href + fnumb, {a:fnumb}, function(data){
     jQuery("#dieg_utm_block").text(window.location.href + fnumb);
@@ -50,7 +50,7 @@
 })
 
 function copyToClipboard(element) {
-	var element = "#dieg_utm_block";
+	/*var element = "#dieg_utm_block";*/
 	var $temp = jQuery("<input>");
 	jQuery("#dieg_utm_block").append($temp);
 	$temp.val(jQuery(element).text()).select();

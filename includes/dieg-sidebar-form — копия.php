@@ -26,7 +26,7 @@ URL страницы записи : <p class="howto"><?php echo  $fullval ?></p>
 </ul>
 
 <div id="tab-1" class="tab-content current">
-	<label style="width: 85px;display: none;">
+	<label style="width: 85px;display: inline-block;">
 
 
 <?php 
@@ -60,12 +60,17 @@ if (array_key_exists('google', $metas) !== 'google') {
 	<label style="width: 85px;display: inline-block;">utm_campaign</label> 
 	<input id="dieg_utm_campaign_fb" class="dieg-input" type="text" name="&utm_campaign=" value="<?php echo  $val ?>"> 
 	<label style="width: 85px;display: inline-block;">utm_term</label> 
-	<input id="dieg_utm_term_fb" class="dieg-input" type="text" name="&utm_term=" value="<?php echo  $meta_value_term_fb ?>"> 
+	<input id="dieg_utm_term_fb" class="dieg-input" type="text" name="&utm_term=" value="<?php
+			echo  $meta_value_term_fb;
+		if ( ! empty( $meta_value_term_fb ) ) { 
+			echo  $meta_value_term_fb;
+		}
+		?>"> 
 	<label style="width: 85px;display: inline-block;">utm_content</label> 
 	<input id="dieg_utm_content_fb" class="dieg-input" type="text" name="&utm_content=" value="<?php echo  $meta_value_content_fb
 	 ?>"> 
- 	<span id="dieg_utm_block_1" style="padding-top: 20px;width:100%;word-wrap: break-word;"></span> 
-	<div style="display:block;margin-top:20px;"><a id="dieg_copy_1" onclick="copyToClipboard('#dieg_utm_block_1')" style="cursor:pointer;display:none;padding-top:10px;">Копировать ссылку для Facebook</a></div>
+<input type="submit" name="submit" value="submit" class="btn btn-primary"/><br/>
+ 
 </div>
 
 <div id="tab-2" class="tab-content">
@@ -76,61 +81,62 @@ if (array_key_exists('google', $metas) !== 'google') {
 	<label style="width: 85px;display: inline-block;">utm_campaign</label> 
 	<input id="dieg_utm_campaign_go" class="" type="text" name="&utm_campaign=" value="<?php echo  $val ?>"> 
 	<label style="width: 85px;display: inline-block;">utm_term</label> 
-	<input id="dieg_utm_term_go" class="" type="text" name="&utm_term=" value="<?php echo  $meta_value_term_go ?>"> 
-	<label style="width: 85px;display: inline-block;">utm_content</label>
+	<input id="dieg_utm_term_go" class="" type="text" name="&utm_term_go=" value="<?php echo  $meta_value_term_go ?>"> 
+	<label style="width: 85px;display: inline-block;">utm_content</label> 
 	<input id="dieg_utm_content_go" class="" type="text" name="&utm_content=" value="<?php echo  $meta_value_content_go
 	 ?>"> 
-
-	<span id="dieg_utm_block_2" style="padding-top: 20px;width:100%;word-wrap: break-word;"></span> 
-	<div style="display:block;margin-top:20px;"><a id="dieg_copy_2" onclick="copyToClipboard('#dieg_utm_block_2')" style="cursor:pointer;display:none;padding-top:10px;">Копировать ссылку для Google</a></div>
 </div>
 
+
+<span id="dieg_utm_block" style="display: block;padding-top: 20px;width:100%;word-wrap: break-word;"></span> 
+<div style="display:block;margin-top:20px;"><a id="dieg_copy" onclick="copyToClipboard('#dieg_utm_block')" style="cursor:pointer;display:none;padding-top:10px;">Копировать ссылку</a></div>
 <a id="dieg_utm" class="dieg-btn" style="display: block; margin-top: 20px;    text-align: center;">Сгенерировать ссылку</a> 
 </div> 
 
- Example value: <input type='text' name='utm_term_fb[<?php echo $post->ID; ?>]' value='<?php echo isset($meta_value_term_fb) ? $meta_value_term_fb : ''; ?>' />
-  <input type='submit' value='save' name="submit"/>
 
-  <?php
-if ( isset( $_POST['utm_term_fb'] ) ){  
-// verify nounce prob a good idea 
-    foreach($_POST['utm_term_fb'] as $item=>$key) {
-        $id= sanitize_text_field($item);
-        update_post_meta( $post->ID, 'utm_term_fb', sanitize_text_field( $key ) );
-    }   
+
+<?php
+session_start();
+if(isset($_POST["submit"])) { 
+
+	$utm_term = $_POST['&utm_term='];
+	update_post_meta($post->ID, 'utm_term', $utm_term);
 }
-
-
-/*add_action( 'save_post', 'dieg_updated_metas');
-function dieg_updated_metas($post_id) {
-	if( array_key_exists('utm_term_fb', $metas !== 0) ) {
-		update_post_meta($post->ID, 'utm_term_fb', $meta_value_term_fb);
-	} else if( array_key_exists('utm_term_fb', $metas) === 0 ) {
-	    add_post_meta( $post->ID, 'utm_term_fb', '', false );
-	} else {
-		update_post_meta($post->ID, 'utm_term_fb', sanitize_text_field( $_REQUEST['example'] ));
-	}
-}*/
-
 ?>
 
-
 <script type="text/javascript">
-jQuery(document).ready(function(){
+	/**
+ * JS Post
+ * Plugin Name:       Dieg UTM URL Builder
+ * Plugin URI:        
+ * Description:       Generates UTM links.
+ * Version:           0.0.1
+ * Author:            Alex Musshtaev
+ * License:           GPL-3.0+
+ * License URI:       http://www.gnu.org/licenses/gpl-3.0.txt
+ * Text Domain:       utm
+ */ 
+ console.log("load")
+
+ jQuery(document).ready(function(){
   jQuery("#dieg_utm").click(function(){
-  	console.log(jQuery(".tab-content.current a[id^='dieg_copy_']"), "fnuma")
-  	jQuery(".tab-content.current a[id^='dieg_copy_']").show();
+  	jQuery("#dieg_copy").show();
   	var fnuma = [];
-  	jQuery(".tab-content.current .dieg-input").each(function(i, field) {
+  	jQuery(".dieg-input").each(function(i, field) {
 		var input = jQuery(this);
 		var name = jQuery(this).attr("name");
 		if(input.val()) {
 			fnuma.push(name + input.val());
 		}
-	});
+	})
+	console.log(fnuma, "fnuma")
    var fnumb = jQuery("#dieg_utm_source").val();
    fnuma = fnuma.join("");
-   jQuery(".tab-content.current span[id^='dieg_utm_block_']").text(fnumb + fnuma);
+   jQuery("#dieg_utm_block").text(fnuma);
+   
+   /*jQuery.post(window.location.href + fnumb, {a:fnumb}, function(data){
+    jQuery("#dieg_utm_block").text(window.location.href + fnumb);
+    });*/
    });
 });
 // tabs
@@ -151,9 +157,9 @@ jQuery(document).ready(function(){
 })
 
 function copyToClipboard(element) {
-	/*var element = "#dieg_utm_block";*/
+	var element = "#dieg_utm_block";
 	var $temp = jQuery("<input>");
-	jQuery(".tab-content.current span[id^='dieg_utm_block_']").append($temp);
+	jQuery("#dieg_utm_block").append($temp);
 	$temp.val(jQuery(element).text()).select();
 	document.execCommand("copy");
 	$temp.remove();
